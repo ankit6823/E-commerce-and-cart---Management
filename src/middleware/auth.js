@@ -24,7 +24,7 @@ const auth= async (req,res,next) =>{
 
   } catch (err) {
     if(err.message=="invalid token") return res.status(401).send({status:false, msg:"invalid token"})
-    if(err.message=="invalid signiture") return res.status(401).send({status:false, msg:"invalid signiture"})
+    if(err.message=="invalid signature") return res.status(401).send({status:false, msg:"invalid signature"})
     res.status(500).send({ status: false, error: err.message });
   }};
 

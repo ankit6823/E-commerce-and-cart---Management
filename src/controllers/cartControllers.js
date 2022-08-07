@@ -14,7 +14,10 @@ const isValid = function (value) {
 const createCart = async function (req, res) {
   try {
     const userId = req.params.userId;
-    if (!mongoose.isValidObjectId(userId)) return res.status(400).send({ msg: "inavalid id format" });
+
+    if (!isValid(userId)) return res.status(400).send({ status: false, message: "Please enter user id" })
+
+    if (!mongoose.isValidObjectId(userId)) return res.status(400).send({ msg: "inavalid userId format" });
 
     let user = await userModel.findById(userId);
 
@@ -94,7 +97,10 @@ const createCart = async function (req, res) {
 const updatedCart = async function (req, res) {
   try{
   const userId = req.params.userId;
-  if (!ObjectId.isValid(userId)) {
+
+  if (!isValid(userId)) return res.status(400).send({ status: false, message: "Please enter user id" })
+
+  if (!mongoose.isValidObjectId(userId)) {
     return res.status(400).send({ status: false, msg: "userId is Invalid" });
   }
   const user = await userModel.findById(userId);
@@ -124,7 +130,7 @@ const updatedCart = async function (req, res) {
 
   // if (cart.isDeleted == true) return res.status(400).send({ status: false, msg: "cart is Already Deleted" })
 
-  if (!ObjectId.isValid(productId)) {
+  if (!mongoose.isValidObjectId(productId)) {
     return res.status(400).send({ status: false, msg: "productId is Invalid" });
   }
 
@@ -139,7 +145,7 @@ const updatedCart = async function (req, res) {
       .status(400)
       .send({ status: false, msg: "product is  Deleted" });
 
-  if (!isValid(removeProduct))
+  if (typeof removeProduct != "number")
     return res.status(400).send({ status: false, message: "please enter " });
   if (!/^[0|1]{1}$/.test(removeProduct))
     return res
@@ -155,7 +161,17 @@ const updatedCart = async function (req, res) {
       .send({ status: false, msg: "Noting to Update in Request from Body" });
   }
 
+  let myProductId = 0
+  for(let i = 0 ; i<cart.items.length; i++ ){
+    if (cart.items[i].productId.toString() == product._id.toString()){  
+       myProductId = cart.items[i].productId
+    }
+  }
+  if(!myProductId) return res.status(400).send({msg:"no such product in cart"})
+
   for (let i = 0; i < cart.items.length; i++) {
+    
+    
     if (cart.items[i].productId.toString() == product._id.toString()) {
       if (removeProduct == 1 && cart.items[i].quantity > 1) {
         cart.items[i].quantity = cart.items[i].quantity - 1;
@@ -208,7 +224,10 @@ const updatedCart = async function (req, res) {
 const getCart = async function (req, res) {
   try {
     const userId = req.params.userId;
-    if (!ObjectId.isValid(userId)) {
+
+    if (!isValid(userId)) return res.status(400).send({ status: false, message: "Please enter user id" })
+
+    if (!mongoose.isValidObjectId(userId)) {
       return res.status(400).send({ status: false, msg: "userId is Invalid" });
     }
     const user = await userModel.findById(userId);
@@ -240,7 +259,9 @@ const deleteCart = async function (req, res) {
   try {
     const userId = req.params.userId;
 
-     if (!ObjectId.isValid(userId)) {
+    if (!isValid(userId)) return res.status(400).send({ status: false, message: "Please enter user id" })
+
+     if (!mongoose.isValidObjectId(userId)) {
       return res.status(400).send({ status: false, msg: "userId is Invalid" });
     }
     let user = await userModel.findById(userId)
